@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "582498486489",
+    "firebase_url": "https://processautomation-dd09a.firebaseio.com",
+    "project_id": "processautomation-dd09a",
+    "storage_bucket": "processautomation-dd09a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:582498486489:android:c6ca298af2fc2f5a",
+        "android_client_info": {
+          "package_name": "com.example.dhruvmalhotra.processautomation"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "582498486489-9pnnattn13ngre75horcvq7710b25enk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.dhruvmalhotra.processautomation",
+            "certificate_hash": "95AADC384DF3F60B99B49CC60F41EDC22D10E7C2"
+          }
+        },
+        {
+          "client_id": "582498486489-qj9q0ibdl9tamjnet6cmcl2d383l4fi3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBasmhxnifb71WO4DMpGPgbnoihgUQCPaM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "582498486489-qj9q0ibdl9tamjnet6cmcl2d383l4fi3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
