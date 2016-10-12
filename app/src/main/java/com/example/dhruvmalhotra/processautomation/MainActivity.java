@@ -34,7 +34,8 @@ public class MainActivity extends AppCompatActivity {
     EditText loginId, passwd;
     Button submitAuth;
     String idEntered, passwdEntered;
-    HashMap mp = new HashMap();
+    HashMap mpId = new HashMap();
+    HashMap mpPasswd = new HashMap();
 
     /**
      * url of the database where loginIDs are stored
@@ -51,8 +52,6 @@ public class MainActivity extends AppCompatActivity {
         loginId = (EditText) findViewById(R.id.edit_login_id);
         passwd = (EditText) findViewById(R.id.edit_passwd);
 
-        passwdEntered = passwd.getText().toString();
-
         submitAuth = (Button) findViewById(R.id.buttonSubmitAuth);
 
         submitAuth.setOnClickListener(new View.OnClickListener() {
@@ -60,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 idEntered = loginId.getText().toString();
+                passwdEntered = passwd.getText().toString();
                 Authentication AuthObj = new Authentication();
                 AuthObj.execute();
             }
@@ -72,14 +72,51 @@ public class MainActivity extends AppCompatActivity {
         protected Void doInBackground(Void... params) {
 
             try {
+                URL urlp = new URL(urlPasswd);
+
+                HttpURLConnection httpURLConnectionPasswd = (HttpURLConnection) urlp.openConnection();
+                httpURLConnectionPasswd.setRequestMethod("GET");
+                httpURLConnectionPasswd.connect();
+                InputStream inputStreamPasswd = httpURLConnectionPasswd.getInputStream();
+                StringBuilder outputPasswd = new StringBuilder();
+                if (inputStreamPasswd != null) {
+                    InputStreamReader inputStreamReader = new InputStreamReader(inputStreamPasswd, Charset.forName("UTF-8"));
+                    BufferedReader reader = new BufferedReader(inputStreamReader);
+                    String line = reader.readLine();
+                    while (line != null) {
+                        outputPasswd.append(line);
+                        line = reader.readLine();
+                    }
+                }
+                String jsonResponsePasswd = null;
+                jsonResponsePasswd = outputPasswd.toString();
+
+                JSONObject jsonObjectPasswd = new JSONObject(jsonResponsePasswd);
+
+                Iterator<String> itr = jsonObjectPasswd.keys();
+                while (itr.hasNext()) {
+                    String key = itr.next();
+
+                    String value = jsonObjectPasswd.getString(key);
+
+                    mpPasswd.put(key,value);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            try {
                 URL url = new URL(urlLoginID);
+
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
                 httpURLConnection.setRequestMethod("GET");
                 httpURLConnection.connect();
-                InputStream inputStream = httpURLConnection.getInputStream();
+                InputStream inputStreamPasswd = httpURLConnection.getInputStream();
                 StringBuilder output = new StringBuilder();
-                if (inputStream != null) {
-                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream, Charset.forName("UTF-8"));
+                if (inputStreamPasswd != null) {
+                    InputStreamReader inputStreamReader = new InputStreamReader(inputStreamPasswd, Charset.forName("UTF-8"));
                     BufferedReader reader = new BufferedReader(inputStreamReader);
                     String line = reader.readLine();
                     while (line != null) {
@@ -90,17 +127,15 @@ public class MainActivity extends AppCompatActivity {
                 String jsonResponse = null;
                 jsonResponse = output.toString();
 
-                JSONObject jsonObjectId = new JSONObject(jsonResponse);
-                //JSONObject jsonObjectpasswd = new JSONObject(passwdEntered);
+                JSONObject jsonObject = new JSONObject(jsonResponse);
 
-
-                Iterator<String> itr = jsonObjectId.keys();
+                Iterator<String> itr = jsonObject.keys();
                 while (itr.hasNext()) {
                     String key = itr.next();
 
-                    String value = jsonObjectId.getString(key);
+                    String value = jsonObject.getString(key);
 
-                    mp.put(key,value);
+                    mpId.put(key,value);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -115,12 +150,9 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
 
-            if(mp.containsValue(idEntered)){
-                Context context = getApplicationContext();
-                CharSequence text = "Right Credentials";
-                int duration = Toast.LENGTH_LONG;
-                Toast toast = Toast.makeText(context, text, duration);
-                toast.show();
+            if(mpId.containsValue(idEntered)&&mpPasswd.containsValue(passwdEntered)){
+                Intent locAct = new Intent(MainActivity.this,LocationActivity.class);
+                startActivity(locAct);
             }
             else{
                 Context context = getApplicationContext();
