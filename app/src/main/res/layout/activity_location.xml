@@ -7,17 +7,5 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/latitude_tv"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/longitude_tv"/>
-
-    <Button
-        android:text="Button"
-        android:layout_width="258dp"
-        android:layout_height="19dp"
-        android:id="@+id/button_for_camera"
-        android:layout_weight="0.14" />
-
+        android:id="@+id/login_message"/>
 </LinearLayout>

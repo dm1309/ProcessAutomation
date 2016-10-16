@@ -7,9 +7,11 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -44,6 +46,7 @@ public class LocationActivity extends AppCompatActivity implements GoogleApiClie
 
     protected TextView mLatitudeText;
     protected TextView mLongitudeText;
+    protected TextView loginMessage;
 
     Button cameraButton ;
 
@@ -53,19 +56,34 @@ public class LocationActivity extends AppCompatActivity implements GoogleApiClie
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location);
-        mLatitudeText = (TextView) findViewById(R.id.latitude_tv);
-        mLongitudeText = (TextView) findViewById(R.id.longitude_tv);
-        cameraButton = (Button) findViewById(R.id.button_for_camera);
+        loginMessage = (TextView) findViewById(R.id.login_message);
+        //mLatitudeText = (TextView) findViewById(R.id.latitude_tv);
+        //mLongitudeText = (TextView) findViewById(R.id.longitude_tv);
+        //cameraButton = (Button) findViewById(R.id.button_for_camera);
 
-        cameraButton.setOnClickListener(new View.OnClickListener() {
+        /*cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(LocationActivity.this,CameraActivity.class);
                 startActivity(intent);
             }
-        });
+        });*/
 
+        Thread welcomeThread = new Thread() {
+
+            @Override
+            public void run() {
+                try {
+                    super.run();
+                    sleep(10000);  //Delay of 10 seconds
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        welcomeThread.start();
         buildGoogleApiClient();
+
     }
     private synchronized void buildGoogleApiClient() {
 
@@ -95,37 +113,42 @@ public class LocationActivity extends AppCompatActivity implements GoogleApiClie
         mLocationRequest.setInterval(10000);
         mLocationRequest.setFastestInterval(5000);
 
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+        if ((int) Build.VERSION.SDK_INT >= 23) {
 
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
 
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
 
-            } else {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        android.Manifest.permission.ACCESS_FINE_LOCATION)) {
 
-                // No explanation needed, we can request the permission.
 
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+                    // Show an explanation to the user *asynchronously* -- don't block
+                    // this thread waiting for the user's response! After the user
+                    // sees the explanation, try again to request the permission.
 
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
+                } else {
+
+                    // No explanation needed, we can request the permission.
+
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                            MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+
+                    // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                    // app-defined int constant. The callback method gets the
+                    // result of the request.
+                }
+
+                return;
             }
-
-            return;
-         }
+        }
 
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
 
@@ -146,7 +169,25 @@ public class LocationActivity extends AppCompatActivity implements GoogleApiClie
     public void onLocationChanged(Location location) {
         Log.i(LOG_TAG,location.toString());
 
-        mLatitudeText.setText(String.valueOf(location.getLatitude()));
-        mLongitudeText.setText(String.valueOf(location.getLongitude()));
+        Location locationReceived = new Location("");
+        locationReceived.setLatitude(MainActivity.latitudeReceived);
+        locationReceived.setLongitude(MainActivity.longitudereceived);
+
+        //mLatitudeText.setText(String.valueOf(location.getLatitude()));
+        //mLongitudeText.setText(String.valueOf(location.getLongitude()));
+
+        float distanceInMeters = location.distanceTo(locationReceived);
+
+        if(distanceInMeters<=30.00){
+            Intent intent = new Intent(LocationActivity.this,CameraActivity.class);
+
+            loginMessage.setText("Your location is correct. Please wait...");
+            startActivity(intent);
+        }else{
+
+            Intent intent = new Intent(LocationActivity.this,MainActivity.class);
+            loginMessage.setText("Your location is incorrect");
+            startActivity(intent);
+        }
     }
 }

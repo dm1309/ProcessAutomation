@@ -176,7 +176,8 @@ public class UploadActivity extends Activity {
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == 200) {
                     // Server response
-                    responseString = EntityUtils.toString(r_entity);
+                    //responseString = EntityUtils.toString(r_entity);
+                    responseString=" Your Image has been uploaded successfully !";
                 } else {
                     responseString = "Error occurred! Http Status Code: "
                             + statusCode;

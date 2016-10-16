@@ -32,7 +32,6 @@ public class CameraActivity extends Activity {
     private Uri fileUri; // file url to store image/video
 
     private ImageView imgPreview;
-    //private VideoView videoPreview;
     private Button btnCapturePicture;
 
     @Override
@@ -210,11 +209,20 @@ public class CameraActivity extends Activity {
         File mediaFile;
         if (type == MEDIA_TYPE_IMAGE) {
             mediaFile = new File(mediaStorageDir.getPath() + File.separator
-                    + "IMG_" + timeStamp + ".jpg");
+                    + "IMG_" + MainActivity.imgStore+"_"+timeStamp + ".jpg");
         }else {
             return null;
         }
 
         return mediaFile;
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        super.onBackPressed();
+        startActivity(new Intent(CameraActivity.this, MainActivity.class));
+        finish();
+
     }
 }
